@@ -27,8 +27,25 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Mono<CustomerDTO> findCustomerById(String customerId) {
+        return customerRepository.findById(customerId)
+                .map(customerMapper::customerToCustomerDto);
+    }
+
+    @Override
     public Flux<CustomerDTO> findCustomerByName(String name) {
         return customerRepository.findCustomersByCustomerNameRegex(name)
+                .map(customerMapper::customerToCustomerDto);
+    }
+
+    @Override
+    public Mono<CustomerDTO> updateCustomer(CustomerDTO customerDTO,  String customerId) {
+        return customerRepository.findById(customerId)
+                .map(foundBeer -> {
+                    foundBeer.setCustomerName(customerDTO.getCustomerName());
+                    return foundBeer;
+                })
+                .flatMap(customerRepository::save)
                 .map(customerMapper::customerToCustomerDto);
     }
 

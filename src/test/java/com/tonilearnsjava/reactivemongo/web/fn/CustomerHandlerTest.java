@@ -11,6 +11,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import static com.tonilearnsjava.reactivemongo.web.fn.CustomerRouterConfig.CUSTOMER_PATH;
+import static com.tonilearnsjava.reactivemongo.web.fn.CustomerRouterConfig.CUSTOMER_PATH_ID;
+
 @SpringBootTest
 @AutoConfigureWebTestClient
 class CustomerHandlerTest {
@@ -55,5 +57,19 @@ class CustomerHandlerTest {
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().exists("location");
+    }
+
+    @Test
+    void testUpdateCustomerNotFound(){
+        CustomerDTO test = CustomerDTO.builder()
+                .customerName("Test Customer")
+                .build();
+
+        webTestClient.put()
+                .uri(CUSTOMER_PATH_ID, test.getId())
+                .body(Mono.just(test), CustomerDTO.class)
+                .header("Content-Type", "application/json")
+                .exchange()
+                .expectStatus().isNotFound();
     }
 }

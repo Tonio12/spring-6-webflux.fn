@@ -9,5 +9,10 @@ public interface CustomerService {
 
     Mono<CustomerDTO> saveCustomer(CustomerDTO customerDto);
 
+    Mono<CustomerDTO> findCustomerById(String  customerId);
+
     Flux<CustomerDTO> findCustomerByName(String name);
+
+    Mono<CustomerDTO> updateCustomer(CustomerDTO customerDTO, String customerId);
+
 }

@@ -3,12 +3,14 @@ package com.tonilearnsjava.reactivemongo.web.fn;
 import com.tonilearnsjava.reactivemongo.model.CustomerDTO;
 import com.tonilearnsjava.reactivemongo.services.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.Validator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebInputException;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
@@ -58,6 +60,14 @@ public class CustomerHandler {
                                 .fromPath(CUSTOMER_PATH_ID)
                                 .build(dto.getId()))
                         .build());
+    }
+
+    public Mono<ServerResponse> updateCustomer(ServerRequest request){
+        return  request.bodyToMono(CustomerDTO.class).doOnNext(this::validate)
+                .flatMap(customerDTO -> customerService
+                        .updateCustomer(customerDTO, request.pathVariable("customerId"))
+                        .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
+                        .flatMap(savedCustomer -> ServerResponse.noContent().build()));
     }
 
 

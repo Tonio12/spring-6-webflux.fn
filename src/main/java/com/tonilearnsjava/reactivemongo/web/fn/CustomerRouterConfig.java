@@ -25,6 +25,7 @@ public class CustomerRouterConfig {
         return route()
                 .GET(CUSTOMER_PATH, accept(MediaType.APPLICATION_JSON), handler::listCustomers)
                 .POST(CUSTOMER_PATH, accept(MediaType.APPLICATION_JSON), handler::saveCustomer)
+                .PUT(CUSTOMER_PATH_ID, accept(MediaType.APPLICATION_JSON), handler::updateCustomer)
                 .build();
     }
 }
